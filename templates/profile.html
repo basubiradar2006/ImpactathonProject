@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ student.name }} | PlacementReady Learning Profile</title>
+  <style>
+    :root {
+      --ink: #14213d;
+      --muted: #5b6475;
+      --line: #dbe3ef;
+      --blue: #2663eb;
+      --green: #12a150;
+      --amber: #d97706;
+      --panel: #ffffff;
+      --bg: #f8fafc;
+      --teal: #0f8f8c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px clamp(18px, 5vw, 72px);
+      background: rgba(248, 250, 252, 0.9);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 12px 24px rgba(38, 99, 235, 0.2);
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .page {
+      padding: clamp(24px, 5vw, 52px) clamp(18px, 5vw, 72px) 60px;
+    }
+
+    .profile-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 14px 34px rgba(20, 33, 61, 0.07);
+    }
+
+    .identity {
+      padding: clamp(22px, 4vw, 36px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #edf6ff;
+      border: 1px solid #b7d5ff;
+      color: #1551b8;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    h1 {
+      font-size: clamp(36px, 5vw, 62px);
+      line-height: 1;
+      color: #0f172a;
+    }
+
+    .identity p {
+      max-width: 760px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .meta {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .meta strong {
+      display: block;
+      margin-top: 4px;
+      color: #0f172a;
+      font-size: 16px;
+    }
+
+    .score-card {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+    }
+
+    .score-ring {
+      display: grid;
+      place-items: center;
+      width: 190px;
+      height: 190px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) 0 var(--score), #e7edf5 var(--score) 100%);
+    }
+
+    .score-ring div {
+      display: grid;
+      place-items: center;
+      width: 138px;
+      height: 138px;
+      border-radius: 50%;
+      background: #fff;
+      text-align: center;
+    }
+
+    .score-ring strong {
+      display: block;
+      font-size: 46px;
+      line-height: 1;
+    }
+
+    .score-ring span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .level {
+      padding: 12px;
+      border-radius: 8px;
+      background: #eaf8ef;
+      color: #0d7d3d;
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 20px;
+    }
+
+    .section {
+      padding: 22px;
+    }
+
+    .section + .section {
+      margin-top: 20px;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: #0f172a;
+      font-size: 25px;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .metric-top span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meter {
+      height: 8px;
+      border-radius: 999px;
+      background: #e8eef7;
+      overflow: hidden;
+    }
+
+    .meter i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--blue);
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .item h3 {
+      margin-bottom: 6px;
+      font-size: 18px;
+    }
+
+    .item p,
+    .item span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .skill {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .skill .meter {
+      grid-column: 1 / -1;
+    }
+
+    .status {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #eef6ff;
+      color: #1551b8;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 8px 10px;
+      border: 1px solid #fed7aa;
+      border-radius: 999px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    @media (max-width: 980px) {
+      .profile-hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        align-items: flex-start;
+      }
+
+      .meta-grid,
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="{{ url_for('home') }}">
+      <span class="brand-mark">PR</span>
+      <span>PlacementReady</span>
+    </a>
+    <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
+  </header>
+
+  <main class="page">
+    <section class="profile-hero">
+      <div class="panel identity">
+        <span class="eyebrow">Student learning profile</span>
+        <h1>{{ student.name }}</h1>
+        <p>
+          {{ student.department }} student targeting a {{ student.target_role }} role.
+          This page shows current skills, learning gaps, and the next technologies to study based on industry needs.
+        </p>
+        <div class="meta-grid">
+          <div class="meta"><span>Student ID</span><strong>{{ student.student_id }}</strong></div>
+          <div class="meta"><span>Year</span><strong>{{ student.year }}</strong></div>
+          <div class="meta"><span>CGPA</span><strong>{{ student.cgpa }}</strong></div>
+          <div class="meta"><span>Location</span><strong>{{ student.location }}</strong></div>
+          <div class="meta"><span>Email</span><strong>{{ student.email }}</strong></div>
+          <div class="meta"><span>Phone</span><strong>{{ student.phone }}</strong></div>
+          <div class="meta"><span>Target Role</span><strong>{{ student.target_role }}</strong></div>
+          <div class="meta"><span>Resume Readiness</span><strong>{{ student.resume_score }}%</strong></div>
+        </div>
+      </div>
+
+      <aside class="panel score-card">
+        <div class="score-ring" style="--score: {{ student.readiness_score }}%">
+          <div>
+            <strong>{{ student.readiness_score }}</strong>
+            <span>Readiness Score</span>
+          </div>
+        </div>
+        <div class="level">{{ student.readiness_level }}</div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <div>
+        <section class="panel section">
+          <h2>Important Skill Readiness Fields</h2>
+          <div class="score-grid">
+            <div class="metric">
+              <div class="metric-top"><span>Project Depth</span><strong>{{ student.project_depth }}%</strong></div>
+              <div class="meter"><i style="width: {{ student.project_depth }}%"></i></div>
+            </div>
+            <div class="metric">
+              <div class="metric-top"><span>Hackathon Evidence</span><strong>{{ student.hackathon_score }}%</strong></div>
+              <div class="meter"><i style="width: {{ student.hackathon_score }}%; background: var(--teal)"></i></div>
+            </div>
+            <div class="metric">
+              <div class="metric-top"><span>Cloud Readiness</span><strong>{{ student.cloud_readiness }}%</strong></div>
+              <div class="meter"><i style="width: {{ student.cloud_readiness }}%; background: var(--amber)"></i></div>
+            </div>
+            <div class="metric">
+              <div class="metric-top"><span>Coding Score</span><strong>{{ student.coding_score }}%</strong></div>
+              <div class="meter"><i style="width: {{ student.coding_score }}%; background: var(--green)"></i></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Learning Project History</h2>
+          <div class="list">
+            {% for project in student.projects %}
+            <article class="item">
+              <h3>{{ project.title }}</h3>
+              <p><strong>Tech:</strong> {{ project.tech }}</p>
+              <p>{{ project.impact }}</p>
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Recommended Learning Roadmap</h2>
+          <div class="list">
+            {% for item in student.recommended_skills %}
+            <article class="item">
+              <h3>{{ item.skill }} <span class="status">{{ item.timeline }}</span></h3>
+              <p>{{ item.reason }}</p>
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel section">
+          <h2>Technical Skills</h2>
+          <div class="list">
+            {% for skill in student.skills %}
+            <div class="item skill">
+              <strong>{{ skill.name }}</strong>
+              <span class="status">{{ skill.status }}</span>
+              <div class="meter"><i style="width: {{ skill.level }}%"></i></div>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Hackathons</h2>
+          <div class="list">
+            {% for hackathon in student.hackathons %}
+            <div class="item">
+              <h3>{{ hackathon.name }}</h3>
+              <p>{{ hackathon.role }} | {{ hackathon.result }}</p>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Certifications</h2>
+          <div class="chips">
+            {% for certificate in student.certifications %}
+            <span class="chip">{{ certificate }}</span>
+            {% endfor %}
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
