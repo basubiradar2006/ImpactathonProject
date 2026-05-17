@@ -83,6 +83,12 @@
       font-weight: 650;
     }
 
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -607,10 +613,19 @@
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="#analyzer">Analyzer</a>
         <a href="#workflow">Workflow</a>
+        <a href="{{ url_for('profile') }}#projects">Projects</a>
         <a href="#roadmap">Roadmap</a>
         <a href="#impact">Impact</a>
       </nav>
-      <a class="button" href="{{ url_for('profile') }}">Learning Profile</a>
+      <div class="nav-actions">
+        {% if session.get('student_email') %}
+        <a class="button secondary" href="{{ url_for('auth_login.logout') }}">Logout</a>
+        <a class="button" href="{{ url_for('profile') }}">Learning Profile</a>
+        {% else %}
+        <a class="button secondary" href="{{ url_for('auth_login.login') }}">Login</a>
+        <a class="button" href="{{ url_for('auth_register.signup') }}">Sign Up</a>
+        {% endif %}
+      </div>
     </header>
 
     <main>
@@ -624,7 +639,7 @@
           </p>
           <div class="hero-actions">
             <a class="button" href="{{ url_for('profile') }}">Open Learning Profile</a>
-            <a class="button secondary" href="#roadmap">See Skill Gaps</a>
+            <a class="button secondary" href="{{ url_for('profile') }}#projects">Open Projects</a>
           </div>
           <div class="trust-row">
             <div class="trust-item">

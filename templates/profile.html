@@ -79,6 +79,7 @@
       color: #fff;
       font-weight: 800;
       box-shadow: 0 12px 24px rgba(38, 99, 235, 0.2);
+      cursor: pointer;
     }
 
     .button.secondary {
@@ -86,6 +87,12 @@
       color: var(--ink);
       border-color: var(--line);
       box-shadow: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .page {
@@ -306,6 +313,129 @@
       grid-column: 1 / -1;
     }
 
+    .analyzer-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .analysis-result {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .analysis-summary {
+      display: grid;
+      gap: 12px;
+    }
+
+    .analysis-summary h3 {
+      color: #0f172a;
+      font-size: 20px;
+    }
+
+    .analysis-summary p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mini-stat {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .mini-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .mini-stat strong {
+      display: block;
+      margin-top: 2px;
+      color: #0f172a;
+      font-size: 18px;
+    }
+
+    .point-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .point-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .point-card.passed {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .point-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+    }
+
+    .point-card span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .language-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .language-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 44px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .tips {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tip {
+      padding: 11px;
+      border: 1px solid #fed7aa;
+      border-radius: 8px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
     .status {
       padding: 6px 9px;
       border-radius: 999px;
@@ -331,9 +461,196 @@
       font-weight: 850;
     }
 
+    .alert {
+      margin-bottom: 18px;
+      padding: 13px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+    }
+
+    .alert.success {
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .alert.error {
+      border: 1px solid #fecaca;
+      background: #fff1f2;
+      color: #b91c1c;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #26324a;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+    }
+
+    input,
+    select {
+      min-height: 45px;
+    }
+
+    textarea {
+      min-height: 96px;
+      padding-top: 11px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(38, 99, 235, 0.12);
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin-bottom: 0;
+    }
+
+    .plus-badge {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+      box-shadow: 0 12px 24px rgba(38, 99, 235, 0.2);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 45px;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      min-height: 18px;
+    }
+
+    .project-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .project-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .project-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .project-head h3 {
+      color: #0f172a;
+      font-size: 19px;
+      margin-bottom: 5px;
+    }
+
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .project-pill {
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: #eef6ff;
+      color: #1551b8;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .project-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .project-links a,
+    .edit-toggle {
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .edit-box {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .empty-state {
+      padding: 16px;
+      border: 1px dashed #b7c6da;
+      border-radius: 8px;
+      background: #fbfdff;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
     @media (max-width: 980px) {
       .profile-hero,
-      .layout {
+      .layout,
+      .analysis-result {
         grid-template-columns: 1fr;
       }
 
@@ -348,8 +665,19 @@
       }
 
       .meta-grid,
-      .score-grid {
+      .score-grid,
+      .form-grid,
+      .point-grid,
+      .analyzer-form {
         grid-template-columns: 1fr;
+      }
+
+      .language-row {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
       }
     }
   </style>
@@ -360,10 +688,24 @@
       <span class="brand-mark">PR</span>
       <span>PlacementReady</span>
     </a>
-    <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
+    <div class="nav-actions">
+      <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
+      {% if session.get('student_email') %}
+      <a class="button" href="{{ url_for('auth_login.logout') }}">Logout</a>
+      {% else %}
+      <a class="button" href="{{ url_for('auth_login.login') }}">Login</a>
+      {% endif %}
+    </div>
   </header>
 
   <main class="page">
+    {% if message %}
+    <div class="alert success">{{ message }}</div>
+    {% endif %}
+    {% if error %}
+    <div class="alert error">{{ error }}</div>
+    {% endif %}
+
     <section class="profile-hero">
       <div class="panel identity">
         <span class="eyebrow">Student learning profile</span>
@@ -376,10 +718,10 @@
           <div class="meta"><span>Student ID</span><strong>{{ student.student_id }}</strong></div>
           <div class="meta"><span>Year</span><strong>{{ student.year }}</strong></div>
           <div class="meta"><span>CGPA</span><strong>{{ student.cgpa }}</strong></div>
-          <div class="meta"><span>Location</span><strong>{{ student.location }}</strong></div>
+          <div class="meta"><span>College</span><strong>{{ student.college_name }}</strong></div>
           <div class="meta"><span>Email</span><strong>{{ student.email }}</strong></div>
           <div class="meta"><span>Phone</span><strong>{{ student.phone }}</strong></div>
-          <div class="meta"><span>Target Role</span><strong>{{ student.target_role }}</strong></div>
+          <div class="meta"><span>Degree</span><strong>{{ student.degree }}</strong></div>
           <div class="meta"><span>Resume Readiness</span><strong>{{ student.resume_score }}%</strong></div>
         </div>
       </div>
@@ -397,6 +739,50 @@
 
     <div class="layout">
       <div>
+        <section class="panel section">
+          <h2>Edit Student Details</h2>
+          <form method="POST" action="{{ url_for('profile') }}">
+            <div class="form-grid">
+              <div class="field">
+                <label for="full_name">Full Name</label>
+                <input id="full_name" name="full_name" type="text" value="{{ student.name }}" required />
+              </div>
+              <div class="field">
+                <label for="phone_number">Phone Number</label>
+                <input id="phone_number" name="phone_number" type="tel" value="{{ student.phone_number }}" maxlength="15" placeholder="Add phone number" />
+              </div>
+              <div class="field full">
+                <label for="college_name">College Name</label>
+                <input id="college_name" name="college_name" type="text" value="{{ '' if student.college_name == 'Not added yet' else student.college_name }}" placeholder="Enter college name" />
+              </div>
+              <div class="field">
+                <label for="degree">Degree</label>
+                <select id="degree" name="degree">
+                  <option value="">Select degree</option>
+                  {% for degree in ['B.E', 'B.Tech', 'MCA', 'BCA', 'MBA'] %}
+                  <option value="{{ degree }}" {% if student.degree == degree %}selected{% endif %}>{{ degree }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field">
+                <label for="department">Department</label>
+                <input id="department" name="department" type="text" value="{{ '' if student.department == 'Not added yet' else student.department }}" placeholder="CSE, ISE, ECE" />
+              </div>
+              <div class="field">
+                <label for="current_year">Current Year</label>
+                <input id="current_year" name="current_year" type="number" min="1" max="6" value="{{ student.current_year }}" placeholder="1 to 6" />
+              </div>
+              <div class="field">
+                <label for="cgpa">CGPA</label>
+                <input id="cgpa" name="cgpa" type="number" min="0" max="10" step="0.01" value="{{ '' if student.cgpa == 'Not added yet' else student.cgpa }}" placeholder="0.00 to 10.00" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="button" type="submit">Apply Changes</button>
+            </div>
+          </form>
+        </section>
+
         <section class="panel section">
           <h2>Important Skill Readiness Fields</h2>
           <div class="score-grid">
@@ -419,16 +805,124 @@
           </div>
         </section>
 
-        <section class="panel section">
-          <h2>Learning Project History</h2>
-          <div class="list">
-            {% for project in student.projects %}
-            <article class="item">
-              <h3>{{ project.title }}</h3>
-              <p><strong>Tech:</strong> {{ project.tech }}</p>
-              <p>{{ project.impact }}</p>
-            </article>
-            {% endfor %}
+        <section class="panel section" id="projects">
+          <div class="section-title">
+            <h2>Learning Projects</h2>
+            <a class="plus-badge" href="#add-project" aria-label="Add project">+</a>
+          </div>
+
+          <form id="add-project" method="POST" action="{{ url_for('add_project') }}">
+            <div class="form-grid">
+              <div class="field">
+                <label for="project_title">Project Title</label>
+                <input id="project_title" name="project_title" type="text" placeholder="Skill Gap Analyzer" required />
+              </div>
+              <div class="field">
+                <label for="domain">Domain</label>
+                <input id="domain" name="domain" type="text" placeholder="AI, Web Dev, Android" />
+              </div>
+              <div class="field full">
+                <label for="project_description">Project Description</label>
+                <textarea id="project_description" name="project_description" placeholder="What problem does this project solve?"></textarea>
+              </div>
+              <div class="field">
+                <label for="tech_stack">Tech Stack</label>
+                <input id="tech_stack" name="tech_stack" type="text" placeholder="Flask, Supabase, HTML, CSS" />
+              </div>
+              <div class="field">
+                <label for="completion_level">Completion Level</label>
+                <input id="completion_level" name="completion_level" type="number" min="0" max="100" placeholder="0 to 100" />
+              </div>
+              <div class="field">
+                <label for="github_link">GitHub Link</label>
+                <input id="github_link" name="github_link" type="url" placeholder="https://github.com/..." />
+              </div>
+              <div class="field">
+                <label for="live_link">Live Link</label>
+                <input id="live_link" name="live_link" type="url" placeholder="https://..." />
+              </div>
+              <label class="checkbox-row">
+                <input name="team_project" type="checkbox" />
+                Team project
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="button" type="submit">Add Project</button>
+            </div>
+          </form>
+
+          <div class="project-list">
+            {% if projects %}
+              {% for project in projects %}
+              <article class="project-card">
+                <div class="project-head">
+                  <div>
+                    <h3>{{ project.project_title }}</h3>
+                    <p>{{ project.project_description or 'No description added yet.' }}</p>
+                  </div>
+                  <span class="project-pill">{{ project.completion_level or 0 }}%</span>
+                </div>
+                <div class="project-meta">
+                  <span class="project-pill">{{ project.domain or 'Domain not added' }}</span>
+                  <span class="project-pill">{{ project.tech_stack or 'Tech stack not added' }}</span>
+                  <span class="project-pill">{{ 'Team' if project.team_project else 'Solo' }}</span>
+                </div>
+                <div class="project-links">
+                  <a href="{{ url_for('project_detail', project_id=project.id) }}">View Details</a>
+                  {% if project.github_link %}
+                  <a href="{{ project.github_link }}" target="_blank" rel="noreferrer">GitHub</a>
+                  {% endif %}
+                  {% if project.live_link %}
+                  <a href="{{ project.live_link }}" target="_blank" rel="noreferrer">Live Demo</a>
+                  {% endif %}
+                </div>
+                <details class="edit-box">
+                  <summary class="edit-toggle">Edit project</summary>
+                  <form method="POST" action="{{ url_for('edit_project', project_id=project.id) }}">
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="project_title_{{ project.id }}">Project Title</label>
+                        <input id="project_title_{{ project.id }}" name="project_title" type="text" value="{{ project.project_title }}" required />
+                      </div>
+                      <div class="field">
+                        <label for="domain_{{ project.id }}">Domain</label>
+                        <input id="domain_{{ project.id }}" name="domain" type="text" value="{{ project.domain or '' }}" />
+                      </div>
+                      <div class="field full">
+                        <label for="project_description_{{ project.id }}">Project Description</label>
+                        <textarea id="project_description_{{ project.id }}" name="project_description">{{ project.project_description or '' }}</textarea>
+                      </div>
+                      <div class="field">
+                        <label for="tech_stack_{{ project.id }}">Tech Stack</label>
+                        <input id="tech_stack_{{ project.id }}" name="tech_stack" type="text" value="{{ project.tech_stack or '' }}" />
+                      </div>
+                      <div class="field">
+                        <label for="completion_level_{{ project.id }}">Completion Level</label>
+                        <input id="completion_level_{{ project.id }}" name="completion_level" type="number" min="0" max="100" value="{{ project.completion_level if project.completion_level is not none else '' }}" />
+                      </div>
+                      <div class="field">
+                        <label for="github_link_{{ project.id }}">GitHub Link</label>
+                        <input id="github_link_{{ project.id }}" name="github_link" type="url" value="{{ project.github_link or '' }}" />
+                      </div>
+                      <div class="field">
+                        <label for="live_link_{{ project.id }}">Live Link</label>
+                        <input id="live_link_{{ project.id }}" name="live_link" type="url" value="{{ project.live_link or '' }}" />
+                      </div>
+                      <label class="checkbox-row">
+                        <input name="team_project" type="checkbox" {% if project.team_project %}checked{% endif %} />
+                        Team project
+                      </label>
+                    </div>
+                    <div class="form-actions">
+                      <button class="button" type="submit">Save Project</button>
+                    </div>
+                  </form>
+                </details>
+              </article>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">No projects added yet. Use the plus button or the form above to add your first project.</div>
+            {% endif %}
           </div>
         </section>
 
@@ -447,36 +941,290 @@
 
       <aside>
         <section class="panel section">
-          <h2>Technical Skills</h2>
-          <div class="list">
-            {% for skill in student.skills %}
-            <div class="item skill">
-              <strong>{{ skill.name }}</strong>
-              <span class="status">{{ skill.status }}</span>
-              <div class="meter"><i style="width: {{ skill.level }}%"></i></div>
+          <div class="section-title">
+            <h2>Technical Skills</h2>
+            <a class="plus-badge" href="#add-skill" aria-label="Add skill">+</a>
+          </div>
+
+          <form id="add-skill" method="POST" action="{{ url_for('prepare_skill_test') }}">
+            <div class="form-grid">
+              <div class="field">
+                <label for="skill_name">Skill Name</label>
+                <input id="skill_name" name="skill_name" type="text" placeholder="Python, Docker, AWS" required />
+              </div>
+              <div class="field full">
+                <label for="skill_description">Skill Context</label>
+                <textarea id="skill_description" name="skill_description" placeholder="Where did you learn or use this skill?"></textarea>
+              </div>
             </div>
-            {% endfor %}
+            <div class="form-actions">
+              <button class="button" type="submit">Start Skill Test</button>
+            </div>
+          </form>
+
+          <div class="project-list">
+            {% if skills %}
+              {% for skill in skills %}
+              <article class="project-card">
+                <div class="project-head">
+                  <div>
+                    <h3>{{ skill.skill_name }}</h3>
+                    <p>{{ skill.skill_description or 'No description added yet.' }}</p>
+                  </div>
+                  <span class="project-pill">{{ skill.progress_percentage or 0 }}%</span>
+                </div>
+                <div class="project-meta">
+                  <span class="project-pill">{{ skill.skill_level or 'Level not added' }}</span>
+                  <span class="project-pill">Score {{ skill.skill_score if skill.skill_score is not none else 0 }}/100</span>
+                  <span class="project-pill">{{ 'Verified' if skill.verified else 'Not verified' }}</span>
+                </div>
+                <div class="meter"><i style="width: {{ skill.progress_percentage or 0 }}%"></i></div>
+
+                <details class="edit-box">
+                  <summary class="edit-toggle">Edit skill</summary>
+                  <form method="POST" action="{{ url_for('edit_skill', skill_id=skill.id) }}">
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="skill_name_{{ skill.id }}">Skill Name</label>
+                        <input id="skill_name_{{ skill.id }}" name="skill_name" type="text" value="{{ skill.skill_name }}" required />
+                      </div>
+                      <div class="field">
+                        <label for="skill_level_{{ skill.id }}">Skill Level</label>
+                        <select id="skill_level_{{ skill.id }}" name="skill_level">
+                          <option value="">Select level</option>
+                          {% for level in ['beginner', 'intermediate', 'advanced'] %}
+                          <option value="{{ level }}" {% if skill.skill_level == level %}selected{% endif %}>{{ level|title }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="field full">
+                        <label for="skill_description_{{ skill.id }}">Skill Description</label>
+                        <textarea id="skill_description_{{ skill.id }}" name="skill_description">{{ skill.skill_description or '' }}</textarea>
+                      </div>
+                      <div class="field">
+                        <label for="skill_score_{{ skill.id }}">Skill Score</label>
+                        <input id="skill_score_{{ skill.id }}" name="skill_score" type="number" min="0" max="100" value="{{ skill.skill_score if skill.skill_score is not none else '' }}" />
+                      </div>
+                      <div class="field">
+                        <label for="progress_percentage_{{ skill.id }}">Progress Percentage</label>
+                        <input id="progress_percentage_{{ skill.id }}" name="progress_percentage" type="number" min="0" max="100" value="{{ skill.progress_percentage if skill.progress_percentage is not none else '' }}" />
+                      </div>
+                      <label class="checkbox-row">
+                        <input name="verified" type="checkbox" {% if skill.verified %}checked{% endif %} />
+                        Verified skill
+                      </label>
+                    </div>
+                    <div class="form-actions">
+                      <button class="button" type="submit">Save Skill</button>
+                    </div>
+                  </form>
+                </details>
+              </article>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">No skills added yet. Add your first skill to start tracking learning progress.</div>
+            {% endif %}
           </div>
         </section>
 
         <section class="panel section">
-          <h2>Hackathons</h2>
-          <div class="list">
-            {% for hackathon in student.hackathons %}
-            <div class="item">
-              <h3>{{ hackathon.name }}</h3>
-              <p>{{ hackathon.role }} | {{ hackathon.result }}</p>
+          <div class="section-title">
+            <h2>Hackathons</h2>
+            <a class="plus-badge" href="#add-hackathon" aria-label="Add hackathon">+</a>
+          </div>
+
+          <form id="add-hackathon" method="POST" action="{{ url_for('add_hackathon') }}">
+            <div class="form-grid">
+              <div class="field full">
+                <label for="hackathon_name">Hackathon Name</label>
+                <input id="hackathon_name" name="hackathon_name" type="text" placeholder="Smart India Hackathon" required />
+              </div>
+              <div class="field">
+                <label for="organizer">Organizer</label>
+                <input id="organizer" name="organizer" type="text" placeholder="College, company, community" />
+              </div>
+              <div class="field">
+                <label for="hackathon_role">Role</label>
+                <select id="hackathon_role" name="role">
+                  <option value="">Select role</option>
+                  <option value="participant">Participant</option>
+                  <option value="team lead">Team Lead</option>
+                  <option value="winner">Winner</option>
+                  <option value="developer">Developer</option>
+                  <option value="designer">Designer</option>
+                  <option value="presenter">Presenter</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="hackathon_domain">Domain</label>
+                <input id="hackathon_domain" name="domain" type="text" placeholder="AI, Web, App, Cybersecurity" />
+              </div>
+              <div class="field">
+                <label for="hackathon_project_title">Project Title</label>
+                <input id="hackathon_project_title" name="project_title" type="text" placeholder="Project built in hackathon" />
+              </div>
+              <div class="field">
+                <label for="start_date">Start Date</label>
+                <input id="start_date" name="start_date" type="date" />
+              </div>
+              <div class="field">
+                <label for="end_date">End Date</label>
+                <input id="end_date" name="end_date" type="date" />
+              </div>
+              <div class="field">
+                <label for="achievement">Achievement</label>
+                <input id="achievement" name="achievement" type="text" placeholder="Winner, Runner-up, Top 10" />
+              </div>
+              <div class="field">
+                <label for="team_size">Team Size</label>
+                <input id="team_size" name="team_size" type="number" min="1" placeholder="4" />
+              </div>
+              <div class="field">
+                <label for="hackathon_github_link">GitHub Link</label>
+                <input id="hackathon_github_link" name="github_link" type="url" placeholder="https://github.com/..." />
+              </div>
+              <div class="field">
+                <label for="demo_link">Demo Link</label>
+                <input id="demo_link" name="demo_link" type="url" placeholder="https://..." />
+              </div>
+              <div class="field full">
+                <label for="certificate_link">Certificate Link</label>
+                <input id="certificate_link" name="certificate_link" type="url" placeholder="https://..." />
+              </div>
+              <div class="field full">
+                <label for="skills_used">Skills Used</label>
+                <textarea id="skills_used" name="skills_used" placeholder="Python, Flask, React, Supabase"></textarea>
+              </div>
             </div>
-            {% endfor %}
+            <div class="form-actions">
+              <button class="button" type="submit">Add Hackathon</button>
+            </div>
+          </form>
+
+          <div class="project-list">
+            {% if hackathons %}
+              {% for hackathon in hackathons %}
+              <article class="project-card">
+                <div class="project-head">
+                  <div>
+                    <h3>{{ hackathon.hackathon_name }}</h3>
+                    <p>{{ hackathon.project_title or 'Project title not added.' }}</p>
+                  </div>
+                  <span class="project-pill">{{ hackathon.achievement or 'Participation' }}</span>
+                </div>
+                <div class="project-meta">
+                  <span class="project-pill">{{ hackathon.role or 'Role not added' }}</span>
+                  <span class="project-pill">{{ hackathon.domain or 'Domain not added' }}</span>
+                  <span class="project-pill">Team {{ hackathon.team_size or 1 }}</span>
+                </div>
+                <p>{{ hackathon.skills_used or 'Skills used not added yet.' }}</p>
+                <div class="project-links">
+                  {% if hackathon.github_link %}
+                  <a href="{{ hackathon.github_link }}" target="_blank" rel="noreferrer">GitHub</a>
+                  {% endif %}
+                  {% if hackathon.demo_link %}
+                  <a href="{{ hackathon.demo_link }}" target="_blank" rel="noreferrer">Demo</a>
+                  {% endif %}
+                  {% if hackathon.certificate_link %}
+                  <a href="{{ hackathon.certificate_link }}" target="_blank" rel="noreferrer">Certificate</a>
+                  {% endif %}
+                </div>
+              </article>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">No hackathons added yet. Add hackathon roles, achievements, and project evidence here.</div>
+            {% endif %}
           </div>
         </section>
 
         <section class="panel section">
-          <h2>Certifications</h2>
-          <div class="chips">
-            {% for certificate in student.certifications %}
-            <span class="chip">{{ certificate }}</span>
-            {% endfor %}
+          <div class="section-title">
+            <h2>Certifications</h2>
+            <a class="plus-badge" href="#add-certification" aria-label="Add certification">+</a>
+          </div>
+
+          <form id="add-certification" method="POST" action="{{ url_for('add_certification') }}">
+            <div class="form-grid">
+              <div class="field full">
+                <label for="certificate_name">Certificate Name</label>
+                <input id="certificate_name" name="certificate_name" type="text" placeholder="Python for Everybody" required />
+              </div>
+              <div class="field">
+                <label for="provider">Provider</label>
+                <input id="provider" name="provider" type="text" placeholder="Coursera, Udemy, NPTEL" />
+              </div>
+              <div class="field">
+                <label for="certification_domain">Domain</label>
+                <input id="certification_domain" name="domain" type="text" placeholder="AI, Web, Cloud" />
+              </div>
+              <div class="field">
+                <label for="issue_date">Issue Date</label>
+                <input id="issue_date" name="issue_date" type="date" />
+              </div>
+              <div class="field">
+                <label for="expiry_date">Expiry Date</label>
+                <input id="expiry_date" name="expiry_date" type="date" />
+              </div>
+              <div class="field">
+                <label for="credential_id">Credential ID</label>
+                <input id="credential_id" name="credential_id" type="text" placeholder="Credential ID" />
+              </div>
+              <div class="field">
+                <label for="duration_hours">Duration Hours</label>
+                <input id="duration_hours" name="duration_hours" type="number" min="1" placeholder="20" />
+              </div>
+              <div class="field">
+                <label for="certification_skill_level">Skill Level</label>
+                <select id="certification_skill_level" name="skill_level">
+                  <option value="">Select level</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="certificate_url">Certificate URL</label>
+                <input id="certificate_url" name="certificate_url" type="url" placeholder="https://..." />
+              </div>
+              <label class="checkbox-row">
+                <input name="verified" type="checkbox" />
+                Verified certificate
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="button" type="submit">Add Certification</button>
+            </div>
+          </form>
+
+          <div class="project-list">
+            {% if certifications %}
+              {% for certificate in certifications %}
+              <article class="project-card">
+                <div class="project-head">
+                  <div>
+                    <h3>{{ certificate.certificate_name }}</h3>
+                    <p>{{ certificate.provider or 'Provider not added.' }}</p>
+                  </div>
+                  <span class="project-pill">{{ certificate.skill_level or 'Level not added' }}</span>
+                </div>
+                <div class="project-meta">
+                  <span class="project-pill">{{ certificate.domain or 'Domain not added' }}</span>
+                  <span class="project-pill">{{ certificate.duration_hours or 0 }} hrs</span>
+                  <span class="project-pill">{{ 'Verified' if certificate.verified else 'Not verified' }}</span>
+                </div>
+                <div class="project-links">
+                  {% if certificate.certificate_url %}
+                  <a href="{{ certificate.certificate_url }}" target="_blank" rel="noreferrer">View Certificate</a>
+                  {% endif %}
+                  {% if certificate.credential_id %}
+                  <span>Credential: {{ certificate.credential_id }}</span>
+                  {% endif %}
+                </div>
+              </article>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">No certifications added yet. Add certificates with provider, level, and verification details.</div>
+            {% endif %}
           </div>
         </section>
       </aside>
