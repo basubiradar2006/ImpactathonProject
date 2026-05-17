@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Learning | PlacementReady</title>
+  <style>
+    :root {
+      --ink: #14213d;
+      --muted: #5b6475;
+      --line: #dbe3ef;
+      --blue: #2663eb;
+      --green: #12a150;
+      --amber: #d97706;
+      --panel: #ffffff;
+      --bg: #f8fafc;
+      --teal: #0f8f8c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px clamp(18px, 5vw, 72px);
+      background: rgba(248, 250, 252, 0.9);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .nav-actions,
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 12px 24px rgba(38, 99, 235, 0.2);
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .page {
+      padding: clamp(24px, 5vw, 52px) clamp(18px, 5vw, 72px) 60px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 14px 34px rgba(20, 33, 61, 0.07);
+    }
+
+    .section {
+      padding: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #edf6ff;
+      border: 1px solid #b7d5ff;
+      color: #1551b8;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    h1 {
+      max-width: 820px;
+      font-size: clamp(36px, 5vw, 62px);
+      line-height: 1;
+      color: #0f172a;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: #0f172a;
+      font-size: 25px;
+    }
+
+    h3 {
+      color: #0f172a;
+      font-size: 18px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin-top: 14px;
+      font-size: 17px;
+    }
+
+    .score-ring {
+      display: grid;
+      place-items: center;
+      width: 190px;
+      height: 190px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) 0 var(--score), #e7edf5 var(--score) 100%);
+    }
+
+    .score-ring div {
+      display: grid;
+      place-items: center;
+      width: 138px;
+      height: 138px;
+      border-radius: 50%;
+      background: #fff;
+      text-align: center;
+    }
+
+    .score-ring strong {
+      display: block;
+      font-size: 46px;
+      line-height: 1;
+    }
+
+    .score-ring span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .level {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #eaf8ef;
+      color: #0d7d3d;
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 20px;
+    }
+
+    .section + .section {
+      margin-top: 20px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .metric,
+    .item {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+      color: #0f172a;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item h3 {
+      margin-bottom: 6px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: #eef6ff;
+      color: #1551b8;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .pill.warn {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+    }
+
+    .meter {
+      height: 8px;
+      margin-top: 10px;
+      border-radius: 999px;
+      background: #e8eef7;
+      overflow: hidden;
+    }
+
+    .meter i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--blue);
+    }
+
+    .action-list {
+      margin-top: 10px;
+      padding-left: 18px;
+    }
+
+    .action-list li + li {
+      margin-top: 5px;
+    }
+
+    .empty-state {
+      padding: 16px;
+      border: 1px dashed #b7c6da;
+      border-radius: 8px;
+      background: #fbfdff;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="{{ url_for('home') }}">
+      <span class="brand-mark">PR</span>
+      <span>PlacementReady</span>
+    </a>
+    <div class="nav-actions">
+      <a class="button secondary" href="{{ url_for('profile') }}">Profile</a>
+      <a class="button" href="{{ url_for('auth_login.logout') }}">Logout</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div class="panel section">
+        <span class="eyebrow">Personal learning</span>
+        <h1>{{ student.name }}'s placement learning tracker</h1>
+        <p>
+          This page combines college placement companies, student skills, and project depth to show what to learn next.
+        </p>
+        <div class="metric-grid">
+          <div class="metric"><span>College</span><strong>{{ student.college_name }}</strong></div>
+          <div class="metric"><span>Projects</span><strong>{{ projects|length }}</strong></div>
+          <div class="metric"><span>Skills</span><strong>{{ skills|length }}</strong></div>
+          <div class="metric"><span>Companies</span><strong>{{ learning_analysis.company_count }}</strong></div>
+        </div>
+      </div>
+      <aside class="panel section">
+        <div class="score-ring" style="--score: {{ learning_analysis.readiness_score }}%">
+          <div>
+            <strong>{{ learning_analysis.readiness_score }}</strong>
+            <span>Readiness</span>
+          </div>
+        </div>
+        <div class="level">{{ learning_analysis.readiness_level }}</div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <div>
+        <section class="panel section">
+          <h2>Learning Depth</h2>
+          <div class="metric-grid">
+            <div class="metric"><span>Skill score</span><strong>{{ learning_analysis.skill_score }}%</strong></div>
+            <div class="metric"><span>Progress</span><strong>{{ learning_analysis.progress_score }}%</strong></div>
+            <div class="metric"><span>Project depth</span><strong>{{ learning_analysis.project_depth }}%</strong></div>
+            <div class="metric"><span>Role coverage</span><strong>{{ learning_analysis.coverage_score }}%</strong></div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Gemini Learning Roadmap</h2>
+          <div class="list">
+            {% for item in learning_analysis.roadmap %}
+            <article class="item">
+              <h3>{{ item.title }} <span class="pill">{{ item.timeline }}</span></h3>
+              <p>{{ item.why }}</p>
+              <ul class="action-list">
+                {% for action in item.actions %}
+                <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Projects Used For Tracking Depth</h2>
+          <div class="list">
+            {% if projects %}
+            {% for project in projects %}
+            <article class="item">
+              <h3>{{ project.project_title }}</h3>
+              <p>{{ project.project_description or 'No project description added yet.' }}</p>
+              <div class="pill-row">
+                <span class="pill">{{ project.domain or 'Domain not added' }}</span>
+                <span class="pill">{{ project.tech_stack or 'Tech stack not added' }}</span>
+                <span class="pill">{{ project.completion_level or 0 }}% complete</span>
+              </div>
+              <div class="meter"><i style="width: {{ project.completion_level or 0 }}%"></i></div>
+            </article>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">Add projects in your profile so the tracker can measure project depth.</div>
+            {% endif %}
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel section">
+          <h2>Skill Gap Tracking</h2>
+          <div class="pill-row">
+            {% for skill in learning_analysis.missing_skills %}
+            <span class="pill warn">{{ skill }}</span>
+            {% else %}
+            <span class="pill">No major required skill gaps found</span>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Student Skills</h2>
+          <div class="list">
+            {% if skills %}
+            {% for skill in skills %}
+            <article class="item">
+              <h3>{{ skill.skill_name }}</h3>
+              <p>{{ skill.skill_description or 'No skill description added yet.' }}</p>
+              <div class="pill-row">
+                <span class="pill">{{ skill.skill_level or 'Level not added' }}</span>
+                <span class="pill">Score {{ skill.skill_score or 0 }}/100</span>
+                <span class="pill">{{ 'Verified' if skill.verified else 'Not verified' }}</span>
+              </div>
+              <div class="meter"><i style="width: {{ skill.progress_percentage or 0 }}%"></i></div>
+            </article>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">Add skills and take skill tests to start progress tracking.</div>
+            {% endif %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>College Placement Companies</h2>
+          <div class="list">
+            {% if companies %}
+            {% for company in companies %}
+            <article class="item">
+              <h3>{{ company.company_name }}</h3>
+              <p>{{ company.role or 'Role not added' }} | {{ company.package_lpa or 0 }} LPA</p>
+              <div class="pill-row">
+                <span class="pill">CGPA {{ company.min_cgpa or 'NA' }}</span>
+                <span class="pill">Visit {{ company.visit_year or 'NA' }}</span>
+              </div>
+            </article>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">Select a college in your profile to see placement companies.</div>
+            {% endif %}
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -614,6 +614,9 @@
         <a href="#analyzer">Analyzer</a>
         <a href="#workflow">Workflow</a>
         <a href="{{ url_for('profile') }}#projects">Projects</a>
+        <a href="{{ url_for('personal_learning') }}">Personal Learning</a>
+        <a href="{{ url_for('mock_interview') }}">Mock Interview</a>
+        <a href="{{ url_for('resume_analyzer') }}">Resume Analyzer</a>
         <a href="#roadmap">Roadmap</a>
         <a href="#impact">Impact</a>
       </nav>
@@ -639,7 +642,9 @@
           </p>
           <div class="hero-actions">
             <a class="button" href="{{ url_for('profile') }}">Open Learning Profile</a>
-            <a class="button secondary" href="{{ url_for('profile') }}#projects">Open Projects</a>
+            <a class="button secondary" href="{{ url_for('personal_learning') }}">Personal Learning</a>
+            <a class="button secondary" href="{{ url_for('mock_interview') }}">Take Mock Interview</a>
+            <a class="button secondary" href="{{ url_for('resume_analyzer') }}">Resume Analyzer</a>
           </div>
           <div class="trust-row">
             <div class="trust-item">
@@ -675,18 +680,18 @@
             <div class="signal-grid">
               <div class="signal">
                 <span>Project depth</span>
-                <strong>Strong</strong>
+                <strong>{{ student.project_depth_label }} | {{ student.project_depth }}%</strong>
                 <div class="meter"><i style="width: {{ student.project_depth }}%"></i></div>
               </div>
               <div class="signal">
                 <span>Hackathon evidence</span>
-                <strong>Good</strong>
+                <strong>{{ student.hackathon_score_label }} | {{ student.hackathon_score }}%</strong>
                 <div class="meter"><i style="width: {{ student.hackathon_score }}%; background: var(--teal)"></i></div>
               </div>
               <div class="signal">
-                <span>Cloud readiness</span>
-                <strong>Needs work</strong>
-                <div class="meter"><i style="width: {{ student.cloud_readiness }}%; background: var(--amber)"></i></div>
+                <span>Skill score</span>
+                <strong>{{ student.skill_score_label }} | {{ student.coding_score }}%</strong>
+                <div class="meter"><i style="width: {{ student.coding_score }}%; background: var(--amber)"></i></div>
               </div>
             </div>
           </div>

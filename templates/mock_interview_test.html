@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Interview Test | PlacementReady</title>
+  <style>
+    :root { --ink:#14213d; --muted:#5b6475; --line:#dbe3ef; --blue:#2663eb; --panel:#fff; --bg:#f8fafc; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    .nav { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:18px clamp(18px,5vw,72px); background:rgba(248,250,252,.9); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:850; }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; border-radius:8px; background:var(--ink); color:#fff; font-weight:900; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 18px; border:1px solid transparent; border-radius:8px; background:var(--blue); color:#fff; font-weight:800; box-shadow:0 12px 24px rgba(38,99,235,.2); cursor:pointer; }
+    .button.secondary { background:#fff; color:var(--ink); border-color:var(--line); box-shadow:none; }
+    .page { max-width:980px; margin:0 auto; padding:clamp(24px,5vw,52px) 18px 60px; }
+    .panel { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:0 14px 34px rgba(20,33,61,.07); }
+    .hero, .question { padding:clamp(20px,4vw,34px); }
+    .hero { margin-bottom:18px; }
+    .eyebrow { display:inline-flex; margin-bottom:18px; padding:8px 12px; border-radius:999px; background:#edf6ff; border:1px solid #b7d5ff; color:#1551b8; font-size:13px; font-weight:850; }
+    h1 { font-size:clamp(34px,5vw,58px); line-height:1; color:#0f172a; }
+    h2 { margin-bottom:12px; color:#0f172a; font-size:20px; }
+    p { color:var(--muted); font-size:15px; }
+    .test-form { display:grid; gap:14px; }
+    .question { border:1px solid var(--line); border-radius:8px; background:#fff; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+    .pill { padding:7px 9px; border-radius:999px; background:#eef6ff; color:#1551b8; font-size:12px; font-weight:850; }
+    .options { display:grid; gap:10px; margin-top:12px; }
+    .option { display:grid; grid-template-columns:20px 1fr; gap:10px; align-items:start; padding:12px; border:1px solid var(--line); border-radius:8px; background:#fbfdff; color:#26324a; font-weight:700; }
+    .option input { margin-top:3px; }
+    textarea { width:100%; min-height:130px; padding:12px; border:1px solid var(--line); border-radius:8px; background:#fbfdff; color:var(--ink); font:inherit; resize:vertical; outline:none; }
+    textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(38,99,235,.12); }
+    .form-actions { display:flex; justify-content:flex-end; gap:10px; padding:18px; border-top:1px solid var(--line); background:#fbfdff; }
+    .loading-overlay { position:fixed; inset:0; z-index:80; display:none; place-items:center; padding:20px; background:rgba(248,250,252,.82); backdrop-filter:blur(10px); }
+    .loading-overlay.active { display:grid; }
+    .loading-card { width:min(420px,100%); padding:24px; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(20,33,61,.18); text-align:center; }
+    .spinner { width:46px; height:46px; margin:0 auto 16px; border:4px solid #dbeafe; border-top-color:var(--blue); border-radius:50%; animation:spin .8s linear infinite; }
+    .loading-card strong { display:block; color:#0f172a; font-size:20px; }
+    .loading-card span { display:block; margin-top:6px; color:var(--muted); font-size:14px; }
+    .button[disabled] { opacity:.7; cursor:wait; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media (max-width:640px) { .nav, .form-actions { align-items:flex-start; flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">PR</span><span>PlacementReady</span></a>
+    <a class="button secondary" href="{{ url_for('mock_interview') }}">Cancel</a>
+  </header>
+
+  <main class="page">
+    <section class="panel hero">
+      <span class="eyebrow">Interview in progress</span>
+      <h1>{{ interview_config.role }} Interview</h1>
+      <p>{{ interview_config.focus }} | {{ interview_config.difficulty_level|title }} | {{ interview_config.question_mode|replace('_', ' ')|title }} | {{ questions|length }} questions</p>
+    </section>
+
+    <form id="submit-interview-form" class="panel test-form" method="POST" action="{{ url_for('submit_mock_interview') }}">
+      <input type="hidden" name="interview_config" value="{{ interview_config|tojson|forceescape }}" />
+      <input type="hidden" name="questions_payload" value="{{ questions|tojson|forceescape }}" />
+      {% for question in questions %}
+      {% set question_index = loop.index0 %}
+      <section class="question">
+        <h2>{{ loop.index }}. {{ question.question }}</h2>
+        <div class="meta">
+          <span class="pill">{{ question.question_type }}</span>
+          <span class="pill">{{ question.topic }}</span>
+          <span class="pill">{{ question.difficulty }}</span>
+        </div>
+        {% if question.question_type == 'multiple_choice' %}
+        <div class="options">
+          {% for option in question.options %}
+          <label class="option">
+            <input type="radio" name="answer_{{ question_index }}" value="{{ loop.index0 }}" required />
+            <span>{{ option }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        {% else %}
+        <textarea name="answer_{{ loop.index0 }}" placeholder="Write your interview answer here..." required></textarea>
+        {% endif %}
+      </section>
+      {% endfor %}
+      <div class="form-actions">
+        <a class="button secondary" href="{{ url_for('mock_interview') }}">Cancel</a>
+        <button class="button" type="submit" data-loading-text="Evaluating...">Submit Interview</button>
+      </div>
+    </form>
+  </main>
+
+  <div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite">
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <strong>Evaluating test...</strong>
+      <span>Gemini is checking your answers, scoring readiness, and finding weak areas.</span>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("submit-interview-form");
+    const overlay = document.getElementById("loading-overlay");
+    form.addEventListener("submit", () => {
+      overlay.classList.add("active");
+      const button = form.querySelector("button[type='submit']");
+      button.disabled = true;
+      button.textContent = button.dataset.loadingText;
+    });
+  </script>
+</body>
+</html>

@@ -68,6 +68,62 @@ def update_student_profile(student_id, profile_data):
     return response.data[0]
 
 
+def get_colleges():
+    response = (
+        get_supabase()
+        .table("colleges")
+        .select("*")
+        .order("college_name")
+        .execute()
+    )
+
+    return response.data or []
+
+
+def get_college_by_name(college_name):
+    if not college_name:
+        return None
+
+    response = (
+        get_supabase()
+        .table("colleges")
+        .select("*")
+        .eq("college_name", college_name)
+        .limit(1)
+        .execute()
+    )
+
+    if not response.data:
+        return None
+
+    return response.data[0]
+
+
+def get_companies_by_college_name(college_name):
+    college = get_college_by_name(college_name)
+    if not college:
+        return []
+
+    response = (
+        get_supabase()
+        .table("college_companies")
+        .select("visit_year, active, companies(*)")
+        .eq("college_id", college["id"])
+        .eq("active", True)
+        .order("visit_year", desc=True)
+        .execute()
+    )
+
+    companies = []
+    for item in response.data or []:
+        company = item.get("companies") or {}
+        company["visit_year"] = item.get("visit_year")
+        company["active"] = item.get("active")
+        companies.append(company)
+
+    return companies
+
+
 def get_projects_by_student(student_id):
     response = (
         get_supabase()
@@ -169,3 +225,72 @@ def update_skill(student_id, skill_id, skill_data):
         return None
 
     return response.data[0]
+
+
+def create_interview(student_id, interview_data):
+    response = (
+        get_supabase()
+        .table("interviews")
+        .insert({"student_id": student_id, **interview_data})
+        .execute()
+    )
+
+    if not response.data:
+        return None
+
+    return response.data[0]
+
+
+def create_interview_questions(interview_id, questions):
+    rows = [{"interview_id": interview_id, **question} for question in questions]
+    response = (
+        get_supabase()
+        .table("interview_questions")
+        .insert(rows)
+        .execute()
+    )
+
+    return response.data or []
+
+
+def get_interviews_by_student(student_id):
+    response = (
+        get_supabase()
+        .table("interviews")
+        .select("*")
+        .eq("student_id", student_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
+
+    return response.data or []
+
+
+def get_interview_by_student(student_id, interview_id):
+    response = (
+        get_supabase()
+        .table("interviews")
+        .select("*")
+        .eq("id", interview_id)
+        .eq("student_id", student_id)
+        .limit(1)
+        .execute()
+    )
+
+    if not response.data:
+        return None
+
+    return response.data[0]
+
+
+def get_interview_questions(interview_id):
+    response = (
+        get_supabase()
+        .table("interview_questions")
+        .select("*")
+        .eq("interview_id", interview_id)
+        .order("id")
+        .execute()
+    )
+
+    return response.data or []

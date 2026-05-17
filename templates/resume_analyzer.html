@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Analyzer | PlacementReady</title>
+  <style>
+    :root { --ink:#14213d; --muted:#5b6475; --line:#dbe3ef; --blue:#2663eb; --green:#12a150; --amber:#d97706; --panel:#fff; --bg:#f8fafc; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    .nav { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:18px clamp(18px,5vw,72px); background:rgba(248,250,252,.9); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:850; }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; border-radius:8px; background:var(--ink); color:#fff; font-weight:900; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 18px; border:1px solid transparent; border-radius:8px; background:var(--blue); color:#fff; font-weight:800; box-shadow:0 12px 24px rgba(38,99,235,.2); cursor:pointer; }
+    .button.secondary { background:#fff; color:var(--ink); border-color:var(--line); box-shadow:none; }
+    .button[disabled] { opacity:.7; cursor:wait; }
+    .page { padding:clamp(24px,5vw,52px) clamp(18px,5vw,72px) 60px; }
+    .hero { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; margin-bottom:20px; }
+    .layout { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; }
+    .panel { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:0 14px 34px rgba(20,33,61,.07); }
+    .section { padding:22px; }
+    .eyebrow { display:inline-flex; margin-bottom:18px; padding:8px 12px; border-radius:999px; background:#edf6ff; border:1px solid #b7d5ff; color:#1551b8; font-size:13px; font-weight:850; }
+    h1 { font-size:clamp(36px,5vw,62px); line-height:1; color:#0f172a; }
+    h2 { margin-bottom:16px; color:#0f172a; font-size:25px; }
+    h3 { color:#0f172a; font-size:18px; }
+    p, li, span { color:var(--muted); font-size:14px; }
+    .hero p { max-width:760px; margin-top:14px; font-size:17px; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .field { display:grid; gap:7px; }
+    .field.full { grid-column:1 / -1; }
+    label { color:#26324a; font-size:13px; font-weight:850; }
+    input, select { width:100%; min-height:45px; padding:0 12px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font:inherit; outline:none; }
+    input[type="file"] { padding:10px 12px; }
+    input:focus, select:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(38,99,235,.12); }
+    .actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .alert { margin-bottom:18px; padding:13px 14px; border-radius:8px; border:1px solid #fecaca; background:#fff1f2; color:#b91c1c; font-weight:800; }
+    .metric-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:16px; }
+    .metric, .item { padding:15px; border:1px solid var(--line); border-radius:8px; background:#fbfdff; }
+    .metric span { display:block; color:var(--muted); font-size:12px; font-weight:850; text-transform:uppercase; }
+    .metric strong { display:block; margin-top:4px; font-size:28px; color:#0f172a; }
+    .list { display:grid; gap:12px; }
+    .section + .section { margin-top:20px; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .pill { padding:7px 9px; border-radius:999px; background:#eef6ff; color:#1551b8; font-size:12px; font-weight:850; }
+    .pill.warn { background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; }
+    .loading-overlay { position:fixed; inset:0; z-index:80; display:none; place-items:center; padding:20px; background:rgba(248,250,252,.82); backdrop-filter:blur(10px); }
+    .loading-overlay.active { display:grid; }
+    .loading-card { width:min(420px,100%); padding:24px; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(20,33,61,.18); text-align:center; }
+    .spinner { width:46px; height:46px; margin:0 auto 16px; border:4px solid #dbeafe; border-top-color:var(--blue); border-radius:50%; animation:spin .8s linear infinite; }
+    .loading-card strong { display:block; color:#0f172a; font-size:20px; }
+    .loading-card span { display:block; margin-top:6px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media (max-width:980px) { .hero, .layout { grid-template-columns:1fr; } }
+    @media (max-width:640px) { .form-grid, .metric-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">PR</span><span>PlacementReady</span></a>
+    <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
+  </header>
+
+  <main class="page">
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+    <section class="hero">
+      <div class="panel section">
+        <span class="eyebrow">Resume analyzer</span>
+        <h1>Find resume gaps for your target company.</h1>
+        <p>Upload your resume, choose the company you are applying for, and Gemini compares it with your saved skills, projects, and college placement company data.</p>
+      </div>
+      <aside class="panel section">
+        <h2>{{ student.name }}</h2>
+        <p>{{ student.college_name }} | {{ student.department }}</p>
+        <div class="pill-row">
+          {% for company in companies[:5] %}
+          <span class="pill">{{ company.company_name }}</span>
+          {% else %}
+          <span class="pill">Select college in profile for company data</span>
+          {% endfor %}
+        </div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <div>
+        <section class="panel section">
+          <h2>Upload Resume</h2>
+          <form id="resume-form" method="POST" action="{{ url_for('resume_analyzer') }}" enctype="multipart/form-data">
+            <div class="form-grid">
+              <div class="field full">
+                <label for="resume_file">Resume Document</label>
+                <input id="resume_file" name="resume_file" type="file" accept=".pdf,.docx,.txt" required />
+              </div>
+              <div class="field">
+                <label for="target_company">Which company are you applying for?</label>
+                <select id="target_company" name="target_company">
+                  <option value="">Not sure yet</option>
+                  {% for company in companies %}
+                  <option value="{{ company.company_name }}" {% if selected_company == company.company_name %}selected{% endif %}>{{ company.company_name }} - {{ company.role or 'Role not added' }}</option>
+                  {% endfor %}
+                  <option value="Other" {% if selected_company and selected_company not in companies|map(attribute='company_name')|list %}selected{% endif %}>Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="custom_company">Other Company</label>
+                <input id="custom_company" name="custom_company" type="text" value="{% if selected_company and selected_company not in companies|map(attribute='company_name')|list %}{{ selected_company }}{% endif %}" placeholder="Google, Wipro, Startup name" />
+              </div>
+            </div>
+            <div class="actions">
+              <button class="button" type="submit" data-loading-text="Analyzing...">Analyze Resume</button>
+            </div>
+          </form>
+        </section>
+
+        {% if analysis %}
+        <section class="panel section">
+          <h2>Analysis Result</h2>
+          <p>{{ analysis.summary }}</p>
+          <div class="metric-grid">
+            <div class="metric"><span>Resume Score</span><strong>{{ analysis.resume_score }}%</strong></div>
+            <div class="metric"><span>Company Fit</span><strong>{{ analysis.company_fit_score }}%</strong></div>
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Improve These Areas</h2>
+          <div class="list">
+            {% for area in analysis.weak_areas %}
+            <article class="item">{{ area }}</article>
+            {% else %}
+            <article class="item">No major weak area found.</article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Learning Recommendations</h2>
+          <div class="list">
+            {% for item in analysis.learning_recommendations %}
+            <article class="item">
+              <h3>{{ item.skill }} <span class="pill">{{ item.timeline }}</span></h3>
+              <p>{{ item.why }}</p>
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+      </div>
+
+      <aside>
+        {% if analysis %}
+        <section class="panel section">
+          <h2>Company Gap</h2>
+          <p>{{ analysis.company_gap }}</p>
+          <div class="pill-row">
+            {% for skill in analysis.missing_skills %}
+            <span class="pill warn">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Resume Fixes</h2>
+          <div class="list">
+            {% for fix in analysis.resume_improvements %}
+            <article class="item">{{ fix }}</article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel section">
+          <h2>Follow-Up Questions</h2>
+          <div class="list">
+            {% for question in analysis.follow_up_questions %}
+            <article class="item">{{ question }}</article>
+            {% endfor %}
+          </div>
+        </section>
+        {% else %}
+        <section class="panel section">
+          <h2>What It Checks</h2>
+          <div class="list">
+            <article class="item">Resume skills vs saved profile skills</article>
+            <article class="item">Projects vs target company role</article>
+            <article class="item">College company requirements vs your evidence</article>
+            <article class="item">Follow-up questions for sharper company fit</article>
+          </div>
+        </section>
+        {% endif %}
+      </aside>
+    </div>
+  </main>
+
+  <div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite">
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <strong>Analyzing resume...</strong>
+      <span>Gemini is comparing your resume with your profile and college company data.</span>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("resume-form");
+    const overlay = document.getElementById("loading-overlay");
+    form.addEventListener("submit", () => {
+      overlay.classList.add("active");
+      const button = form.querySelector("button[type='submit']");
+      button.disabled = true;
+      button.textContent = button.dataset.loadingText;
+    });
+  </script>
+</body>
+</html>

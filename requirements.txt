@@ -1,4 +1,6 @@
 flask
 supabase
 python-dotenv
-google-generativeai
+google-genai
+PyPDF2
+python-docx

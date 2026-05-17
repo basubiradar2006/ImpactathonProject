@@ -6,11 +6,25 @@ from urllib.request import Request, urlopen
 
 from flask import Flask, redirect, render_template, request, session, url_for
 
-from ai import evaluate_skill_answers, generate_skill_test
+from ai import (
+    analyze_resume_with_gemini,
+    evaluate_mock_interview_answers,
+    evaluate_skill_answers,
+    generate_mock_interview_questions,
+    generate_skill_test,
+)
+from analyzer import analyze_student_learning
 from auth import login_bp, register_bp
 from auth.store import (
     create_project,
     create_skill,
+    create_interview,
+    create_interview_questions,
+    get_colleges,
+    get_companies_by_college_name,
+    get_interview_by_student,
+    get_interview_questions,
+    get_interviews_by_student,
     get_project_by_student,
     find_student_by_id,
     get_projects_by_student,
@@ -25,11 +39,25 @@ from certifications import (
     get_certifications_by_student,
     get_hackathons_by_student,
 )
+from resume_analyzer import extract_resume_text
 
 app = Flask(__name__)
 app.secret_key = "placement-ready-dev-key"
 app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
+
+INTERVIEW_FOCUS_OPTIONS = [
+    "Overall profile",
+    "Skills already added",
+    "Java",
+    "Python",
+    "JavaScript",
+    "React",
+    "Flask",
+    "SQL",
+    "DSA",
+    "Machine Learning",
+]
 
 analyzer_data = {
     "target_role": "Full Stack Developer",
@@ -108,6 +136,40 @@ def format_year(year):
     if not year:
         return "Not added yet"
     return f"Year {year}"
+
+
+def score_label(score):
+    if score >= 80:
+        return "Strong"
+    if score >= 60:
+        return "Good"
+    if score >= 40:
+        return "Needs practice"
+    if score > 0:
+        return "Getting started"
+    return "No data yet"
+
+
+def readiness_label(score):
+    if score >= 80:
+        return "Interview ready"
+    if score >= 60:
+        return "Almost ready"
+    if score >= 40:
+        return "Needs more practice"
+    return "Needs fundamentals"
+
+
+def build_interview_expected_answer(question):
+    expected_answer = question.get("expected_answer") or ""
+    if question.get("question_type") != "multiple_choice":
+        return expected_answer
+
+    options = question.get("options") or []
+    answer_index = question.get("answer")
+    if isinstance(answer_index, int) and answer_index < len(options):
+        return f"Correct option: {options[answer_index]}\n\n{expected_answer}"
+    return expected_answer
 
 
 def build_student_profile(db_student=None):
@@ -425,6 +487,15 @@ def render_profile(student_id, message=None, error=None):
     skills = get_skills_by_student(student_id)
     hackathons = get_hackathons_by_student(student_id)
     certifications = get_certifications_by_student(student_id)
+    colleges = get_colleges()
+    companies = get_companies_by_college_name(db_student.get("college_name"))
+    learning_analysis = analyze_student_learning(
+        db_student,
+        projects,
+        skills,
+        companies=companies,
+        hackathons=hackathons,
+    )
 
     return render_template(
         'profile.html',
@@ -433,6 +504,8 @@ def render_profile(student_id, message=None, error=None):
         skills=skills,
         hackathons=hackathons,
         certifications=certifications,
+        colleges=colleges,
+        learning_analysis=learning_analysis,
         message=message,
         error=error,
     )
@@ -441,12 +514,341 @@ def render_profile(student_id, message=None, error=None):
 @app.route('/')
 def home():
     student = None
+    learning_analysis = None
     if session.get("student_id"):
         try:
             student = find_student_by_id(session["student_id"])
+            projects = get_projects_by_student(session["student_id"])
+            skills = get_skills_by_student(session["student_id"])
+            hackathons = get_hackathons_by_student(session["student_id"])
+            companies = get_companies_by_college_name(student.get("college_name"))
+            learning_analysis = analyze_student_learning(
+                student,
+                projects,
+                skills,
+                companies=companies,
+                hackathons=hackathons,
+                include_roadmap=False,
+            )
         except Exception:
             student = None
-    return render_template('home.html', student=build_student_profile(student))
+            learning_analysis = None
+
+    student_profile = build_student_profile(student)
+    if learning_analysis:
+        student_profile.update(
+            {
+                "readiness_score": learning_analysis["readiness_score"],
+                "readiness_level": learning_analysis["readiness_level"],
+                "project_depth": learning_analysis["project_depth"],
+                "hackathon_score": learning_analysis["hackathon_score"],
+                "coding_score": learning_analysis["skill_score"],
+                "cloud_readiness": learning_analysis["coverage_score"],
+                "project_depth_label": score_label(learning_analysis["project_depth"]),
+                "hackathon_score_label": score_label(learning_analysis["hackathon_score"]),
+                "skill_score_label": score_label(learning_analysis["skill_score"]),
+            }
+        )
+    elif not student:
+        student_profile.update(
+            {
+                "readiness_score": 0,
+                "readiness_level": "No student data yet",
+                "project_depth": 0,
+                "hackathon_score": 0,
+                "coding_score": 0,
+                "cloud_readiness": 0,
+                "recommended_skills": [],
+                "project_depth_label": "No data yet",
+                "hackathon_score_label": "No data yet",
+                "skill_score_label": "No data yet",
+            }
+        )
+    else:
+        student_profile.update(
+            {
+                "project_depth_label": score_label(student_profile["project_depth"]),
+                "hackathon_score_label": score_label(student_profile["hackathon_score"]),
+                "skill_score_label": score_label(student_profile["coding_score"]),
+            }
+        )
+
+    return render_template(
+        'home.html',
+        student=student_profile,
+        learning_analysis=learning_analysis,
+    )
+
+
+@app.route('/personal-learning')
+def personal_learning():
+    if not session.get("student_id"):
+        return redirect(url_for("auth_login.login"))
+
+    db_student = find_student_by_id(session["student_id"])
+    if not db_student:
+        session.clear()
+        return redirect(url_for("auth_login.login"))
+
+    projects = get_projects_by_student(session["student_id"])
+    skills = get_skills_by_student(session["student_id"])
+    hackathons = get_hackathons_by_student(session["student_id"])
+    companies = get_companies_by_college_name(db_student.get("college_name"))
+    learning_analysis = analyze_student_learning(
+        db_student,
+        projects,
+        skills,
+        companies=companies,
+        hackathons=hackathons,
+    )
+
+    return render_template(
+        "personal_learning.html",
+        student=build_student_profile(db_student),
+        projects=projects,
+        skills=skills,
+        hackathons=hackathons,
+        companies=companies,
+        learning_analysis=learning_analysis,
+    )
+
+
+@app.route('/mock-interview')
+def mock_interview():
+    if not session.get("student_id"):
+        return redirect(url_for("auth_login.login"))
+
+    db_student = find_student_by_id(session["student_id"])
+    if not db_student:
+        session.clear()
+        return redirect(url_for("auth_login.login"))
+
+    interviews = get_interviews_by_student(session["student_id"])
+    skills = get_skills_by_student(session["student_id"])
+    return render_template(
+        "mock_interview.html",
+        student=build_student_profile(db_student),
+        skills=skills,
+        interviews=interviews,
+        focus_options=INTERVIEW_FOCUS_OPTIONS,
+        error=request.args.get("error"),
+    )
+
+
+@app.route('/mock-interview/start', methods=['POST'])
+def start_mock_interview():
+    if not session.get("student_id"):
+        return redirect(url_for("auth_login.login"))
+
+    focus_choice = request.form.get("focus_choice", "").strip()
+    custom_focus = request.form.get("custom_focus", "").strip()
+    role = request.form.get("role", "").strip() or "Software Engineer"
+    difficulty_level = request.form.get("difficulty_level", "").strip() or "medium"
+    question_mode = request.form.get("question_mode", "").strip() or "theoretical"
+    total_questions_raw = request.form.get("total_questions", "").strip()
+
+    try:
+        total_questions = int(total_questions_raw) if total_questions_raw else 5
+    except ValueError:
+        return redirect(url_for("mock_interview", error="Question count must be a valid number."))
+
+    if focus_choice == "Other":
+        focus = custom_focus
+    else:
+        focus = focus_choice or "Overall profile"
+
+    if not focus:
+        return redirect(url_for("mock_interview", error="Please enter an interview focus."))
+    if total_questions not in {3, 5, 7}:
+        return redirect(url_for("mock_interview", error="Question count must be 3, 5, or 7."))
+    if question_mode not in {"multiple_choice", "theoretical", "both"}:
+        return redirect(url_for("mock_interview", error="Please select a valid interview question mode."))
+
+    try:
+        db_student = find_student_by_id(session["student_id"])
+        projects = get_projects_by_student(session["student_id"])
+        skills = get_skills_by_student(session["student_id"])
+        interview_config = {
+            "interview_type": "mock",
+            "role": role,
+            "difficulty_level": difficulty_level,
+            "question_mode": question_mode,
+            "focus": focus,
+            "total_questions": total_questions,
+        }
+        questions = generate_mock_interview_questions(db_student, skills, projects, interview_config)
+    except Exception as exc:
+        app.logger.exception("Mock interview generation failed")
+        return redirect(url_for("mock_interview", error=f"Could not generate interview: {exc}"))
+
+    return render_template(
+        "mock_interview_test.html",
+        interview_config=interview_config,
+        questions=questions,
+    )
+
+
+@app.route('/mock-interview/submit', methods=['POST'])
+def submit_mock_interview():
+    if not session.get("student_id"):
+        return redirect(url_for("auth_login.login"))
+
+    try:
+        questions = json.loads(request.form.get("questions_payload", "[]"))
+        interview_config = json.loads(request.form.get("interview_config", "{}"))
+        for index, question in enumerate(questions):
+            raw_answer = request.form.get(f"answer_{index}", "").strip()
+            if question.get("question_type") == "multiple_choice":
+                selected_index = int(raw_answer) if raw_answer.isdigit() else None
+                options = question.get("options") or []
+                question["selected_answer_index"] = selected_index
+                question["user_answer"] = (
+                    options[selected_index]
+                    if selected_index is not None and selected_index < len(options)
+                    else ""
+                )
+            else:
+                question["user_answer"] = raw_answer
+
+        if not questions or any(not question.get("user_answer") for question in questions):
+            return redirect(url_for("mock_interview", error="Please answer every interview question."))
+
+        evaluation = evaluate_mock_interview_answers(questions, interview_config)
+        correct_count = sum(1 for result in evaluation["question_results"] if result["is_correct"])
+        accuracy = round((correct_count / len(questions)) * 100) if questions else 0
+        weak_areas = evaluation.get("weak_areas") or []
+        feedback_summary = evaluation["feedback_summary"]
+        if weak_areas:
+            feedback_summary = f"{feedback_summary}\n\nWeak areas: {', '.join(weak_areas)}"
+
+        interview = create_interview(
+            session["student_id"],
+            {
+                "interview_type": interview_config.get("interview_type") or "mock",
+                "role": interview_config.get("role") or "Software Engineer",
+                "difficulty_level": interview_config.get("difficulty_level") or "medium",
+                "total_questions": len(questions),
+                "total_score": evaluation["total_score"],
+                "communication_score": evaluation["communication_score"],
+                "technical_score": evaluation["technical_score"],
+                "confidence_score": evaluation["confidence_score"],
+                "feedback_summary": feedback_summary,
+                "interview_status": "completed",
+            },
+        )
+
+        question_rows = []
+        for question, result in zip(questions, evaluation["question_results"]):
+            question_rows.append(
+                {
+                    "question": question.get("question"),
+                    "question_type": question.get("question_type"),
+                    "topic": question.get("topic"),
+                    "difficulty": question.get("difficulty"),
+                    "user_answer": question.get("user_answer"),
+                    "expected_answer": build_interview_expected_answer(question),
+                    "ai_feedback": result.get("ai_feedback"),
+                    "score": result.get("score"),
+                }
+            )
+        create_interview_questions(interview["id"], question_rows)
+        return redirect(url_for("mock_interview_result", interview_id=interview["id"], accuracy=accuracy))
+    except (ValueError, json.JSONDecodeError):
+        return redirect(url_for("mock_interview", error="Interview answers could not be evaluated. Please try again."))
+    except Exception as exc:
+        app.logger.exception("Mock interview submission failed")
+        return redirect(url_for("mock_interview", error=f"Interview submission failed: {exc}"))
+
+
+@app.route('/mock-interview/<int:interview_id>')
+def mock_interview_result(interview_id):
+    if not session.get("student_id"):
+        return redirect(url_for("auth_login.login"))
+
+    interview = get_interview_by_student(session["student_id"], interview_id)
+    if not interview:
+        return redirect(url_for("mock_interview", error="Interview result not found."))
+
+    questions = get_interview_questions(interview_id)
+    correct_count = sum(1 for question in questions if (question.get("score") or 0) >= 7)
+    wrong_count = max(0, len(questions) - correct_count)
+    accuracy = request.args.get("accuracy")
+    if accuracy is None:
+        accuracy = round((correct_count / len(questions)) * 100) if questions else 0
+    else:
+        accuracy = int(accuracy)
+
+    weak_topics = sorted(
+        {
+            question.get("topic") or "General"
+            for question in questions
+            if (question.get("score") or 0) < 7
+        }
+    )
+
+    return render_template(
+        "mock_interview_result.html",
+        interview=interview,
+        questions=questions,
+        correct_count=correct_count,
+        wrong_count=wrong_count,
+        accuracy=accuracy,
+        readiness=readiness_label(interview.get("total_score") or 0),
+        weak_topics=weak_topics,
+    )
+
+
+@app.route('/resume-analyzer', methods=['GET', 'POST'])
+def resume_analyzer():
+    if not session.get("student_id"):
+        return redirect(url_for("auth_login.login"))
+
+    db_student = find_student_by_id(session["student_id"])
+    if not db_student:
+        session.clear()
+        return redirect(url_for("auth_login.login"))
+
+    projects = get_projects_by_student(session["student_id"])
+    skills = get_skills_by_student(session["student_id"])
+    companies = get_companies_by_college_name(db_student.get("college_name"))
+    analysis = None
+    selected_company = ""
+    error = None
+
+    if request.method == "POST":
+        selected_company = request.form.get("target_company", "").strip()
+        custom_company = request.form.get("custom_company", "").strip()
+        if selected_company == "Other":
+            selected_company = custom_company
+
+        uploaded_file = request.files.get("resume_file")
+        if not uploaded_file or not uploaded_file.filename:
+            error = "Please upload your resume as PDF, DOCX, or TXT."
+        else:
+            try:
+                resume_text = extract_resume_text(uploaded_file)
+                analysis = analyze_resume_with_gemini(
+                    resume_text=resume_text,
+                    student=db_student,
+                    skills=skills,
+                    projects=projects,
+                    companies=companies,
+                    target_company=selected_company or None,
+                )
+            except Exception as exc:
+                app.logger.exception("Resume analysis failed")
+                error = f"Resume analysis failed: {exc}"
+
+    return render_template(
+        "resume_analyzer.html",
+        student=build_student_profile(db_student),
+        companies=companies,
+        skills=skills,
+        projects=projects,
+        analysis=analysis,
+        selected_company=selected_company,
+        error=error,
+    )
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -507,6 +909,8 @@ def profile():
         skills=[],
         hackathons=[],
         certifications=[],
+        colleges=[],
+        learning_analysis=None,
         message=message,
         error=error,
     )

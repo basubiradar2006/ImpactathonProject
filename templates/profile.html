@@ -436,6 +436,17 @@
       font-weight: 750;
     }
 
+    .action-list {
+      margin-top: 10px;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .action-list li + li {
+      margin-top: 5px;
+    }
+
     .status {
       padding: 6px 9px;
       border-radius: 999px;
@@ -691,6 +702,7 @@
     <div class="nav-actions">
       <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
       {% if session.get('student_email') %}
+      <a class="button secondary" href="{{ url_for('personal_learning') }}">Personal Learning</a>
       <a class="button" href="{{ url_for('auth_login.logout') }}">Logout</a>
       {% else %}
       <a class="button" href="{{ url_for('auth_login.login') }}">Login</a>
@@ -727,13 +739,13 @@
       </div>
 
       <aside class="panel score-card">
-        <div class="score-ring" style="--score: {{ student.readiness_score }}%">
+        <div class="score-ring" style="--score: {{ learning_analysis.readiness_score if learning_analysis else student.readiness_score }}%">
           <div>
-            <strong>{{ student.readiness_score }}</strong>
+            <strong>{{ learning_analysis.readiness_score if learning_analysis else student.readiness_score }}</strong>
             <span>Readiness Score</span>
           </div>
         </div>
-        <div class="level">{{ student.readiness_level }}</div>
+        <div class="level">{{ learning_analysis.readiness_level if learning_analysis else student.readiness_level }}</div>
       </aside>
     </section>
 
@@ -753,7 +765,15 @@
               </div>
               <div class="field full">
                 <label for="college_name">College Name</label>
-                <input id="college_name" name="college_name" type="text" value="{{ '' if student.college_name == 'Not added yet' else student.college_name }}" placeholder="Enter college name" />
+                <select id="college_name" name="college_name">
+                  <option value="">Select college</option>
+                  {% for college in colleges %}
+                  <option value="{{ college.college_name }}" {% if student.college_name == college.college_name %}selected{% endif %}>{{ college.college_name }}</option>
+                  {% endfor %}
+                  {% if student.college_name != 'Not added yet' and student.college_name not in colleges|map(attribute='college_name')|list %}
+                  <option value="{{ student.college_name }}" selected>{{ student.college_name }}</option>
+                  {% endif %}
+                </select>
               </div>
               <div class="field">
                 <label for="degree">Degree</label>
@@ -787,20 +807,20 @@
           <h2>Important Skill Readiness Fields</h2>
           <div class="score-grid">
             <div class="metric">
-              <div class="metric-top"><span>Project Depth</span><strong>{{ student.project_depth }}%</strong></div>
-              <div class="meter"><i style="width: {{ student.project_depth }}%"></i></div>
+              <div class="metric-top"><span>Project Depth</span><strong>{{ learning_analysis.project_depth if learning_analysis else student.project_depth }}%</strong></div>
+              <div class="meter"><i style="width: {{ learning_analysis.project_depth if learning_analysis else student.project_depth }}%"></i></div>
             </div>
             <div class="metric">
-              <div class="metric-top"><span>Hackathon Evidence</span><strong>{{ student.hackathon_score }}%</strong></div>
-              <div class="meter"><i style="width: {{ student.hackathon_score }}%; background: var(--teal)"></i></div>
+              <div class="metric-top"><span>Skill Progress</span><strong>{{ learning_analysis.progress_score if learning_analysis else student.hackathon_score }}%</strong></div>
+              <div class="meter"><i style="width: {{ learning_analysis.progress_score if learning_analysis else student.hackathon_score }}%; background: var(--teal)"></i></div>
             </div>
             <div class="metric">
-              <div class="metric-top"><span>Cloud Readiness</span><strong>{{ student.cloud_readiness }}%</strong></div>
-              <div class="meter"><i style="width: {{ student.cloud_readiness }}%; background: var(--amber)"></i></div>
+              <div class="metric-top"><span>Role Skill Coverage</span><strong>{{ learning_analysis.coverage_score if learning_analysis else student.cloud_readiness }}%</strong></div>
+              <div class="meter"><i style="width: {{ learning_analysis.coverage_score if learning_analysis else student.cloud_readiness }}%; background: var(--amber)"></i></div>
             </div>
             <div class="metric">
-              <div class="metric-top"><span>Coding Score</span><strong>{{ student.coding_score }}%</strong></div>
-              <div class="meter"><i style="width: {{ student.coding_score }}%; background: var(--green)"></i></div>
+              <div class="metric-top"><span>Skill Score</span><strong>{{ learning_analysis.skill_score if learning_analysis else student.coding_score }}%</strong></div>
+              <div class="meter"><i style="width: {{ learning_analysis.skill_score if learning_analysis else student.coding_score }}%; background: var(--green)"></i></div>
             </div>
           </div>
         </section>
@@ -929,12 +949,26 @@
         <section class="panel section">
           <h2>Recommended Learning Roadmap</h2>
           <div class="list">
+            {% if learning_analysis %}
+            {% for item in learning_analysis.roadmap %}
+            <article class="item">
+              <h3>{{ item.title }} <span class="status">{{ item.timeline }}</span></h3>
+              <p>{{ item.why }}</p>
+              <ul class="action-list">
+                {% for action in item.actions %}
+                <li>{{ action }}</li>
+                {% endfor %}
+              </ul>
+            </article>
+            {% endfor %}
+            {% else %}
             {% for item in student.recommended_skills %}
             <article class="item">
               <h3>{{ item.skill }} <span class="status">{{ item.timeline }}</span></h3>
               <p>{{ item.reason }}</p>
             </article>
             {% endfor %}
+            {% endif %}
           </div>
         </section>
       </div>

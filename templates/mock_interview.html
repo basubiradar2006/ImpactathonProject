@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Interview | PlacementReady</title>
+  <style>
+    :root { --ink:#14213d; --muted:#5b6475; --line:#dbe3ef; --blue:#2663eb; --panel:#fff; --bg:#f8fafc; --green:#12a150; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    .nav { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:18px clamp(18px,5vw,72px); background:rgba(248,250,252,.9); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:850; }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; border-radius:8px; background:var(--ink); color:#fff; font-weight:900; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 18px; border:1px solid transparent; border-radius:8px; background:var(--blue); color:#fff; font-weight:800; box-shadow:0 12px 24px rgba(38,99,235,.2); cursor:pointer; }
+    .button.secondary { background:#fff; color:var(--ink); border-color:var(--line); box-shadow:none; }
+    .page { padding:clamp(24px,5vw,52px) clamp(18px,5vw,72px) 60px; }
+    .hero { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; margin-bottom:20px; }
+    .panel { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:0 14px 34px rgba(20,33,61,.07); }
+    .section { padding:22px; }
+    .eyebrow { display:inline-flex; margin-bottom:18px; padding:8px 12px; border-radius:999px; background:#edf6ff; border:1px solid #b7d5ff; color:#1551b8; font-size:13px; font-weight:850; }
+    h1 { font-size:clamp(36px,5vw,62px); line-height:1; color:#0f172a; }
+    h2 { margin-bottom:16px; color:#0f172a; font-size:25px; }
+    h3 { color:#0f172a; font-size:18px; }
+    p, span { color:var(--muted); font-size:14px; }
+    .hero p { max-width:760px; margin-top:14px; font-size:17px; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .field { display:grid; gap:7px; }
+    .field.full { grid-column:1 / -1; }
+    label { color:#26324a; font-size:13px; font-weight:850; }
+    input, select { width:100%; min-height:45px; padding:0 12px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font:inherit; outline:none; }
+    input:focus, select:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(38,99,235,.12); }
+    .actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap; }
+    .alert { margin-bottom:18px; padding:13px 14px; border-radius:8px; border:1px solid #fecaca; background:#fff1f2; color:#b91c1c; font-weight:800; }
+    .list { display:grid; gap:12px; }
+    .item { padding:15px; border:1px solid var(--line); border-radius:8px; background:#fbfdff; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .pill { padding:7px 9px; border-radius:999px; background:#eef6ff; color:#1551b8; font-size:12px; font-weight:850; }
+    .skill-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .empty-state { padding:16px; border:1px dashed #b7c6da; border-radius:8px; background:#fbfdff; color:var(--muted); font-weight:750; }
+    .loading-overlay { position:fixed; inset:0; z-index:80; display:none; place-items:center; padding:20px; background:rgba(248,250,252,.82); backdrop-filter:blur(10px); }
+    .loading-overlay.active { display:grid; }
+    .loading-card { width:min(420px,100%); padding:24px; border:1px solid var(--line); border-radius:8px; background:#fff; box-shadow:0 24px 70px rgba(20,33,61,.18); text-align:center; }
+    .spinner { width:46px; height:46px; margin:0 auto 16px; border:4px solid #dbeafe; border-top-color:var(--blue); border-radius:50%; animation:spin .8s linear infinite; }
+    .loading-card strong { display:block; color:#0f172a; font-size:20px; }
+    .loading-card span { display:block; margin-top:6px; }
+    .button[disabled] { opacity:.7; cursor:wait; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media (max-width:980px) { .hero { grid-template-columns:1fr; } }
+    @media (max-width:640px) { .form-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">PR</span><span>PlacementReady</span></a>
+    <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
+  </header>
+
+  <main class="page">
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+    <section class="hero">
+      <div class="panel section">
+        <span class="eyebrow">Mock interview</span>
+        <h1>Practice interviews from your profile, skills, or chosen topic.</h1>
+        <p>Gemini generates practical questions, evaluates your answers, stores the attempt, and highlights weak areas for the next round.</p>
+      </div>
+      <aside class="panel section">
+        <h2>{{ student.name }}</h2>
+        <p>{{ student.department }} | {{ student.college_name }}</p>
+        <div class="skill-chips">
+          {% for skill in skills[:8] %}
+          <span class="pill">{{ skill.skill_name }}</span>
+          {% else %}
+          <span class="pill">No skills added yet</span>
+          {% endfor %}
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel section">
+      <h2>Start Interview</h2>
+      <form id="generate-interview-form" method="POST" action="{{ url_for('start_mock_interview') }}">
+        <div class="form-grid">
+          <div class="field">
+            <label for="role">Role</label>
+            <input id="role" name="role" type="text" value="Software Engineer" />
+          </div>
+          <div class="field">
+            <label for="difficulty_level">Difficulty</label>
+            <select id="difficulty_level" name="difficulty_level">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="question_mode">Question Mode</label>
+            <select id="question_mode" name="question_mode">
+              <option value="multiple_choice">Multiple choice</option>
+              <option value="theoretical" selected>Theoretical</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="focus_choice">Interview Focus</label>
+            <select id="focus_choice" name="focus_choice">
+              {% for option in focus_options %}
+              <option value="{{ option }}">{{ option }}</option>
+              {% endfor %}
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="custom_focus">Other Focus</label>
+            <input id="custom_focus" name="custom_focus" type="text" placeholder="Spring Boot, Django, Android" />
+          </div>
+          <div class="field">
+            <label for="total_questions">Questions</label>
+            <select id="total_questions" name="total_questions">
+              <option value="3">3 questions</option>
+              <option value="5" selected>5 questions</option>
+              <option value="7">7 questions</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="button" type="submit" data-loading-text="Generating...">Generate Interview</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel section" style="margin-top:20px">
+      <h2>Previous Attempts</h2>
+      <div class="list">
+        {% for interview in interviews %}
+        <article class="item">
+          <h3>{{ interview.role }} <span class="pill">{{ interview.total_score or 0 }}%</span></h3>
+          <p>{{ interview.feedback_summary or 'Completed interview.' }}</p>
+          <div class="pill-row">
+            <span class="pill">{{ interview.difficulty_level or 'medium' }}</span>
+            <span class="pill">{{ interview.total_questions or 0 }} questions</span>
+            <a class="pill" href="{{ url_for('mock_interview_result', interview_id=interview.id) }}">View Result</a>
+          </div>
+        </article>
+        {% else %}
+        <div class="empty-state">No mock interviews completed yet.</div>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite">
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <strong>Generating interview questions...</strong>
+      <span>Gemini is preparing practical questions from your selected focus.</span>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("generate-interview-form");
+    const overlay = document.getElementById("loading-overlay");
+    form.addEventListener("submit", () => {
+      overlay.classList.add("active");
+      const button = form.querySelector("button[type='submit']");
+      button.disabled = true;
+      button.textContent = button.dataset.loadingText;
+    });
+  </script>
+</body>
+</html>
